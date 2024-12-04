@@ -24,7 +24,7 @@ const dictionarySchema = new mongoose.Schema({
 
 const Dictionary = mongoose.model('Entry', dictionarySchema);
 
-// Search Route
+// Search Route with Bidirectional Search
 app.get('/api/search', async (req, res) => {
   try {
     const { query } = req.query;
@@ -33,10 +33,10 @@ app.get('/api/search', async (req, res) => {
       return res.json([]);
     }
 
-    // Create a case-insensitive regex search
+    // Create case-insensitive regex search
     const searchRegex = new RegExp(query.trim(), 'i');
 
-    // Perform search with multiple matching criteria
+    // Perform search in both headword and sense
     const results = await Dictionary.find({
       $or: [
         { headword: searchRegex },

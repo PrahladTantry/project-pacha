@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Search, BookOpen, AlertCircle } from 'lucide-react';
+import { Search, BookOpen, AlertCircle, RefreshCcw } from 'lucide-react';
 
 const DictionarySearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchMode, setSearchMode] = useState('malayalam');
 
   useEffect(() => {
     const searchTimeout = setTimeout(() => {
@@ -18,7 +19,7 @@ const DictionarySearch = () => {
     }, 300);
 
     return () => clearTimeout(searchTimeout);
-  }, [searchQuery]);
+  }, [searchQuery, searchMode]);
 
   const performSearch = async () => {
     setLoading(true);
@@ -37,14 +38,28 @@ const DictionarySearch = () => {
     }
   };
 
+  const toggleSearchMode = () => {
+    setSearchMode(searchMode === 'malayalam' ? 'english' : 'malayalam');
+    setResults([]);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 text-white py-16 px-4">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center mb-8">
-          <BookOpen className="w-10 h-10 text-green-400 mr-4" />
-          <h1 className="text-3xl md:text-4xl font-bold text-green-400">
-            Malayalam Dictionary Search
-          </h1>
+        <div className="flex items-center mb-8 justify-between">
+          <div className="flex items-center">
+            <BookOpen className="w-10 h-10 text-green-400 mr-4" />
+            <h1 className="text-3xl md:text-4xl font-bold text-green-400">
+              Malayalam Dictionary
+            </h1>
+          </div>
+          <button 
+            onClick={toggleSearchMode}
+            className="flex items-center bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md"
+          >
+            <RefreshCcw className="mr-2 w-4 h-4" />
+            {searchMode === 'malayalam' ? 'English Search' : 'Malayalam Search'}
+          </button>
         </div>
 
         <div className="relative mb-8">
@@ -52,7 +67,7 @@ const DictionarySearch = () => {
             type="text" 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search for a Malayalam word..."
+            placeholder={`Search for a ${searchMode === 'malayalam' ? 'Malayalam' : 'English'} word...`}
             className="w-full px-4 py-3 rounded-lg bg-gray-800 text-white 
               border border-gray-700 focus:outline-none focus:ring-2 
               focus:ring-green-500 transition duration-300"
